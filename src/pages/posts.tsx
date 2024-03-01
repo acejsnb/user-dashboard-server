@@ -1,4 +1,4 @@
-import {useRouter} from 'next/router';
+import "@/app/globals.css";
 import {getUsers, getPosts, PostItem, UserItem} from "@/apis";
 
 interface PostsProps {
@@ -7,11 +7,6 @@ interface PostsProps {
 }
 
 const Posts = ({user,posts}: PostsProps) => {
-    const router = useRouter();
-
-    if (router.isPreview) {
-        return <div>loading...</div>
-    }
 
     return (
         <div className="flex min-h-full flex-col p-10 bg-gray-50">
@@ -39,6 +34,7 @@ const Posts = ({user,posts}: PostsProps) => {
 export default Posts;
 
 export async function getServerSideProps(context: any) {
+// export async function getStaticProps(context: any) {
     const [user, posts] = await Promise.all([getUsers({id: context.query.id as string}), getPosts({userId: context.query.id as string})])
     return {props: {user: user?.[0] ?? {},posts}}
 }
