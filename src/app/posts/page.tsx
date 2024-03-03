@@ -1,12 +1,15 @@
 import "@/app/globals.css";
 import {getUsers, getPosts, PostItem, UserItem} from "@/apis";
 
-interface PostsProps {
-    user: UserItem
-    posts: PostItem[]
+interface Props {
+    searchParams: {
+        id: string
+    }
 }
 
-const Posts = ({user,posts}: PostsProps) => {
+const Posts = async ({searchParams}: Props) => {
+    const [users, posts] = (await Promise.all([getUsers({id: searchParams.id as string}), getPosts({userId: searchParams.id as string})]))
+    const user = users[0] || {};
 
     return (
         <div className="flex min-h-full flex-col p-10 bg-gray-50">
@@ -32,9 +35,3 @@ const Posts = ({user,posts}: PostsProps) => {
 }
 
 export default Posts;
-
-export async function getServerSideProps(context: any) {
-// export async function getStaticProps(context: any) {
-    const [user, posts] = await Promise.all([getUsers({id: context.query.id as string}), getPosts({userId: context.query.id as string})])
-    return {props: {user: user?.[0] ?? {},posts}}
-}
